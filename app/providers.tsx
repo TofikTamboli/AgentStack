@@ -15,8 +15,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <NextThemesProvider
         attribute="class"
-        defaultTheme="system"
-        enableSystem
+        defaultTheme="light"
+        enableSystem={false}
         disableTransitionOnChange
       >
         <ReactLenis root>
