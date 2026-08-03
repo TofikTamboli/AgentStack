@@ -1,9 +1,9 @@
 "use client";
 
+import "./SpecularButton.css";
+
 import { Color, Mesh, Program, Renderer, Triangle } from "ogl";
 import React, { useEffect, useRef } from "react";
-
-import "./SpecularButton.css";
 
 const PAD = 20;
 

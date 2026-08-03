@@ -1,8 +1,8 @@
 "use client";
 
-import React, { memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Globe, Layers, ShieldCheck } from "lucide-react";
+import React, { memo } from "react";
 
 import { ProjectItem, ServiceCategory } from "@/config/services";
 

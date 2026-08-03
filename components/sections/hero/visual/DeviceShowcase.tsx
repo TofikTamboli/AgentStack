@@ -1,8 +1,8 @@
 "use client";
 
-import React, { memo, useCallback, useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { CheckCircle2, Globe, Shield, Smartphone, Sparkles, Zap } from "lucide-react";
+import React, { memo, useCallback, useRef } from "react";
 
 export const DeviceShowcase = memo(function DeviceShowcase() {
   const containerRef = useRef<HTMLDivElement>(null);

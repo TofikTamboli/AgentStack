@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { Activity, Bot, CheckCircle2, Cpu, Zap } from "lucide-react";
+import React, { memo } from "react";
 
 interface FloatingCardProps {
   id: string;

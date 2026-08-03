@@ -1,10 +1,11 @@
 "use client";
 
-import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 import { Activity, Bot, ChevronDown, ChevronUp } from "lucide-react";
+import React, { memo, useCallback, useMemo, useRef, useState } from "react";
 
 import { OptionWheel, OptionWheelRef } from "@/components/ui/OptionWheel";
-import { SERVICES_DATA, ServiceCategory } from "@/config/services";
+import { ServiceCategory,SERVICES_DATA } from "@/config/services";
+
 import { ServicePreviewPanel } from "./ServicePreviewPanel";
 
 export const HeroVisual = memo(function HeroVisual() {

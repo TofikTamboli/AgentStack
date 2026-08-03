@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { ArrowRight, Bot, Calendar, CheckCircle2, Cpu, Mail, UserCheck } from "lucide-react";
+import React, { memo } from "react";
 
 export const AIAgentPreview = memo(function AIAgentPreview() {
   return (

@@ -1,13 +1,13 @@
 "use client";
 
-import React, { memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import React, { memo } from "react";
 
-import { ServiceTabId } from "./ServiceTabs";
 import { AIAgentPreview } from "./previews/AIAgentPreview";
 import { AutomationPreview } from "./previews/AutomationPreview";
 import { SEOPreview } from "./previews/SEOPreview";
 import { WebsitePreview } from "./previews/WebsitePreview";
+import { ServiceTabId } from "./ServiceTabs";
 
 interface PreviewCanvasProps {
   activeTab: ServiceTabId;

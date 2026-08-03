@@ -1,9 +1,10 @@
 "use client";
 
+import "./OptionWheel.css";
+
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 import { playTactileClick } from "@/lib/audio";
-import "./OptionWheel.css";
 
 const DEFAULT_ITEMS = [
   "Website Development",

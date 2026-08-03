@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { motion } from "framer-motion";
+import React, { memo } from "react";
 
 import { heroContent } from "@/config/hero";
 

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { ArrowUpRight, CheckCircle2, Layers, Smartphone, Sparkles, Zap } from "lucide-react";
+import React, { memo } from "react";
 
 export const WebsitePreview = memo(function WebsitePreview() {
   return (

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { memo } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Compass } from "lucide-react";
 import Link from "next/link";
+import React, { memo } from "react";
 
 import { SpecularButton } from "@/components/ui/SpecularButton";
 import { heroContent } from "@/config/hero";

@@ -3,6 +3,7 @@
 import React, { memo } from "react";
 
 import { Container } from "@/components/ui/Container";
+
 import { HeroBadge } from "./HeroBadge";
 import { HeroButtons } from "./HeroButtons";
 import { HeroHeadline } from "./HeroHeadline";

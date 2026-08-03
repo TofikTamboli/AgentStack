@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { CheckCircle2, Database, MessageSquare, Play, RefreshCw, Zap } from "lucide-react";
+import React, { memo } from "react";
 
 export const AutomationPreview = memo(function AutomationPreview() {
   return (

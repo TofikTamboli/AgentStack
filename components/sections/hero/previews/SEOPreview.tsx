@@ -1,7 +1,7 @@
 "use client";
 
-import React, { memo } from "react";
 import { Activity, TrendingUp } from "lucide-react";
+import React, { memo } from "react";
 
 export const SEOPreview = memo(function SEOPreview() {
   return (
