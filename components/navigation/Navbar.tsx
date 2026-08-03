@@ -1,11 +1,12 @@
 "use client";
 
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, Sparkles, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { SpecularButton } from "@/components/ui/SpecularButton";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -20,17 +21,24 @@ const NAV_ITEMS = [
 
 export function Navbar() {
   const pathname = usePathname();
-  const { scrollY } = useScroll();
+  const [navVisible, setNavVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("/");
+
+  const lastScrollY = useRef(0);
+  const rafId = useRef<number | null>(null);
 
   // Sync active item with route and window hash
   useEffect(() => {
     if (typeof window !== "undefined") {
       const currentHash = window.location.hash;
       const fullPath = currentHash ? `${pathname}${currentHash}` : pathname;
-      const matched = NAV_ITEMS.find((item) => item.href === fullPath || (pathname !== "/" && item.href.startsWith(pathname)));
+      const matched = NAV_ITEMS.find(
+        (item) =>
+          item.href === fullPath ||
+          (pathname !== "/" && item.href.startsWith(pathname))
+      );
       if (matched) {
         setActiveHref(matched.href);
       } else if (pathname === "/") {
@@ -39,9 +47,48 @@ export function Navbar() {
     }
   }, [pathname]);
 
-  useMotionValueEvent(scrollY, "change", (latest) => {
-    setScrolled(latest > 20);
-  });
+  // Premium Scroll Direction Detection (15px threshold, RAF throttled, passive listener)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (rafId.current !== null) return;
+
+      rafId.current = requestAnimationFrame(() => {
+        rafId.current = null;
+        const currentY = window.scrollY;
+
+        // Top of page: always show
+        if (currentY < 20) {
+          setNavVisible(true);
+          setScrolled(false);
+          lastScrollY.current = currentY;
+          return;
+        }
+
+        setScrolled(true);
+
+        const delta = currentY - lastScrollY.current;
+        // Ignore tiny micro scroll movements (<15px)
+        if (Math.abs(delta) >= 15) {
+          if (delta > 0 && !mobileMenuOpen) {
+            // Scrolling down -> hide navbar
+            setNavVisible(false);
+          } else {
+            // Scrolling up -> show navbar
+            setNavVisible(true);
+          }
+          lastScrollY.current = currentY;
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+      }
+    };
+  }, [mobileMenuOpen]);
 
   const handleNavClick = (href: string) => {
     setActiveHref(href);
@@ -51,19 +98,26 @@ export function Navbar() {
   return (
     <>
       <motion.header
-        initial={{ y: -30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4 md:px-6 pointer-events-none"
+        initial={{ y: 0, opacity: 1 }}
+        animate={{
+          y: navVisible || mobileMenuOpen ? 0 : -20,
+          opacity: navVisible || mobileMenuOpen ? 1 : 0,
+        }}
+        transition={{ duration: 0.35, ease: "easeOut" }}
+        className={cn(
+          "fixed top-0 left-0 right-0 z-50 flex justify-center pt-5 px-4 md:px-6",
+          navVisible || mobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
       >
         {/* Floating Light Gray Navigation Card (#E6E6E6, rounded-[18px]) */}
         <nav
           aria-label="Main Navigation"
           className={cn(
-            "pointer-events-auto flex items-center justify-between w-full max-w-[1320px] h-[70px] rounded-[18px] transition-all duration-300 ease-in-out",
+            "flex items-center justify-between w-full max-w-[1320px] h-[70px] rounded-[18px] transition-all duration-300 ease-in-out",
             "bg-[#E6E6E6]/95 backdrop-blur-md border border-[rgba(0,0,0,0.08)] shadow-[0_10px_32px_rgba(0,0,0,0.06)]",
             "px-6 md:px-7",
-            scrolled && "shadow-[0_14px_40px_rgba(0,0,0,0.09)] border-[rgba(0,0,0,0.1)] bg-[#E6E6E6]"
+            scrolled &&
+              "shadow-[0_14px_40px_rgba(0,0,0,0.09)] border-[rgba(0,0,0,0.1)] bg-[#E6E6E6]"
           )}
         >
           {/* Logo */}
@@ -80,7 +134,7 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Nav Items (Single Animated Active Indicator layoutId="active-nav") */}
+          {/* Desktop Nav Items */}
           <ul className="hidden xl:flex items-center gap-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive = activeHref === item.href;
@@ -117,20 +171,28 @@ export function Navbar() {
             })}
           </ul>
 
-          {/* CTA Button */}
+          {/* SpecularButton CTA in Navbar */}
           <div className="hidden lg:flex items-center">
-            <Link
-              href="/#contact"
-              onClick={() => handleNavClick("/#contact")}
-              className={cn(
-                "group inline-flex items-center justify-center gap-2 h-[46px] px-[28px] rounded-xl text-[16px] font-semibold tracking-[-0.02em] leading-none transition-all duration-250",
-                "bg-[#0F0F11] text-white hover:bg-black",
-                "shadow-[0_4px_14px_rgba(0,0,0,0.09)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.14)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              )}
-            >
-              <span>Book a Discovery Call</span>
-              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+            <Link href="/#contact" onClick={() => handleNavClick("/#contact")}>
+              <SpecularButton
+                size="md"
+                radius={12}
+                tint="#00020F"
+                tintOpacity={1}
+                textColor="#ffffff"
+                lineColor="#8EA8FF"
+                baseColor="#475569"
+                intensity={2.5}
+                shineSize={12}
+                shineFade={20}
+                thickness={1.5}
+                speed={0.35}
+                followMouse
+                autoAnimate
+              >
+                <span>Book a Discovery Call</span>
+                <ArrowRight className="w-4 h-4" />
+              </SpecularButton>
             </Link>
           </div>
 
@@ -199,10 +261,28 @@ export function Navbar() {
                 <Link
                   href="/#contact"
                   onClick={() => handleNavClick("/#contact")}
-                  className="flex items-center justify-center gap-2 w-full h-[46px] rounded-xl bg-[#0F0F11] text-white text-[16px] font-semibold tracking-[-0.02em] shadow-md active:scale-[0.98] transition-all"
+                  className="block w-full"
                 >
-                  <span>Book a Discovery Call</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <SpecularButton
+                    size="lg"
+                    radius={12}
+                    tint="#00020F"
+                    tintOpacity={1}
+                    textColor="#ffffff"
+                    lineColor="#8EA8FF"
+                    baseColor="#475569"
+                    intensity={2.5}
+                    shineSize={12}
+                    shineFade={20}
+                    thickness={1.5}
+                    speed={0.35}
+                    followMouse
+                    autoAnimate
+                    className="w-full"
+                  >
+                    <span>Book a Discovery Call</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </SpecularButton>
                 </Link>
               </motion.div>
             </nav>
